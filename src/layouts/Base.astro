@@ -1,0 +1,83 @@
+---
+import '../styles/global.css';
+import { config } from '../config';
+
+interface Props {
+  titulo: string;
+  descripcion: string;
+}
+
+const { titulo, descripcion } = Astro.props;
+// Sin URL absoluta, WhatsApp/Facebook no muestran la imagen (ver astro.config.mjs).
+const base = config.urlSitio || Astro.site;
+const absoluta = (ruta: string) => (base ? new URL(ruta, base).href : ruta);
+const url = absoluta('/');
+const imagen = absoluta('/og.jpg');
+const altImagen = `${config.marca}: el reto de ${config.totalDias} días de flexiones de ${config.nombre}`;
+
+// Datos estructurados para Google: página de perfil de Henry con sus redes.
+const datosEstructurados = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfilePage',
+  name: titulo,
+  description: descripcion,
+  url,
+  inLanguage: 'es',
+  mainEntity: {
+    '@type': 'Person',
+    name: config.nombre,
+    alternateName: config.marca,
+    description: config.lema,
+    image: absoluta('/henry.jpg'),
+    sameAs: [config.instagram, config.facebook],
+  },
+};
+---
+
+<!doctype html>
+<html lang="es">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="theme-color" content="#08080a" />
+    <meta name="generator" content={Astro.generator} />
+    <title>{titulo}</title>
+    <meta name="description" content={descripcion} />
+    <meta name="author" content={config.nombre} />
+    {base && <link rel="canonical" href={url} />}
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="icon" href="/favicon.ico" sizes="32x32" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="es_EC" />
+    <meta property="og:site_name" content={config.marca} />
+    <meta property="og:title" content={titulo} />
+    <meta property="og:description" content={descripcion} />
+    <meta property="og:image" content={imagen} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={altImagen} />
+    {base && <meta property="og:url" content={url} />}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={titulo} />
+    <meta name="twitter:description" content={descripcion} />
+    <meta name="twitter:image" content={imagen} />
+    <meta name="twitter:image:alt" content={altImagen} />
+    <script type="application/ld+json" set:html={JSON.stringify(datosEstructurados)} />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&family=Luckiest+Guy&display=swap"
+    />
+  </head>
+  <body
+    class="min-h-svh overflow-x-hidden bg-noche bg-[radial-gradient(120%_60%_at_50%_0%,rgb(255_198_41/0.16),transparent_60%),radial-gradient(90%_50%_at_50%_100%,rgb(255_198_41/0.08),transparent_70%)] font-sans text-white antialiased"
+  >
+    <slot />
+  </body>
+</html>

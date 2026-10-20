@@ -1,0 +1,36 @@
+---
+import { dosDigitos, type Estado } from '../lib/reto';
+
+interface Props {
+  estado: Estado;
+}
+
+const { cuenta, completado } = Astro.props.estado;
+const bloques = [
+  { clave: 'dias', etiqueta: 'Días', valor: String(cuenta.dias) },
+  { clave: 'horas', etiqueta: 'Horas', valor: dosDigitos(cuenta.horas) },
+  { clave: 'minutos', etiqueta: 'Min', valor: dosDigitos(cuenta.minutos) },
+  { clave: 'segundos', etiqueta: 'Seg', valor: dosDigitos(cuenta.segundos) },
+];
+---
+
+<section data-vista="activo" hidden={completado} class="mt-14 text-center motion-safe:animate-subir motion-safe:[animation-delay:800ms]">
+  <h2 class="font-display text-[clamp(1.6rem,7.5vw,2rem)] leading-none text-balance uppercase sticker-oro -rotate-2">Días para terminar el año</h2>
+  <div class="mt-6 grid grid-cols-4 gap-2.5">
+    {
+      bloques.map(({ clave, etiqueta, valor }) => (
+        <div
+          class:list={[
+            'rounded-2xl border-2 border-black bg-white/[0.06] px-1 pt-3 pb-2 shadow-[0_4px_0_#000]',
+            clave === 'segundos' && 'border-oro/70 bg-oro/10',
+          ]}
+        >
+          <span data-r={`cuenta-${clave}`} class="block font-display text-[clamp(1.9rem,10vw,2.75rem)] leading-none tabular-nums sticker">
+            {valor}
+          </span>
+          <span class="mt-1.5 block text-[0.7rem] font-bold tracking-widest text-white/60 uppercase">{etiqueta}</span>
+        </div>
+      ))
+    }
+  </div>
+</section>

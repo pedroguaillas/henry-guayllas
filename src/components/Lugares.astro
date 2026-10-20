@@ -1,0 +1,79 @@
+---
+import { config } from '../config';
+import { hayFoto, mostrarPendientes } from '../lib/fotos';
+import Bandera from './Bandera.astro';
+
+const { lugares } = config;
+const paises = new Set(lugares.map((l) => l.pais)).size;
+const ciudades = lugares.filter((l) => l.ciudad).length;
+const datos = [
+  { valor: paises, etiqueta: paises === 1 ? 'País' : 'Países' },
+  ...(ciudades > 0 ? [{ valor: ciudades, etiqueta: ciudades === 1 ? 'Ciudad' : 'Ciudades' }] : []),
+  { valor: 0, etiqueta: 'Excusas' },
+];
+---
+
+{
+  lugares.length > 0 && (
+    <section class="mt-16 lg:mt-28" aria-label="El reto viaja">
+      <div class="text-center">
+        <h2 data-revelar="sello" class="font-display text-[clamp(2.2rem,11vw,3.5rem)] leading-none uppercase sticker-oro -rotate-2">El reto viaja</h2>
+        <p class="mt-3 text-base font-semibold text-white/70">Donde esté, las flexiones no se negocian.</p>
+      </div>
+
+      <div class="mx-auto mt-7 flex max-w-md justify-center gap-3">
+        {datos.map(({ valor, etiqueta }, i) => (
+          <div data-revelar style={`--retraso:${i * 120}ms`} class="flex-1 rounded-2xl border-2 border-black bg-white/[0.06] py-3 text-center shadow-[0_4px_0_#000]">
+            <span class="block font-display text-4xl leading-none sticker">{valor}</span>
+            <span class="mt-1.5 block text-[0.7rem] font-bold tracking-widest text-white/60 uppercase">{etiqueta}</span>
+          </div>
+        ))}
+      </div>
+
+      <div class="mt-8 grid grid-cols-2 gap-3 [perspective:1100px] lg:grid-cols-4 lg:gap-6">
+        {lugares.map((lugar, i) => {
+          const foto = hayFoto(lugar.foto) ? lugar.foto : null;
+          return (
+            <div data-revelar="voltear" data-paralaje style={`--retraso:${i * 130}ms;--p:${i % 2 ? 1.2 : 0.7}`}>
+              <article
+                data-tilt
+                class:list={[
+                  'relative aspect-[4/5] overflow-hidden rounded-3xl border-[3px] border-black bg-gradient-to-br from-oro-oscuro/40 via-zinc-900 to-noche shadow-[0_5px_0_#000]',
+                  i % 2 ? 'rotate-1' : '-rotate-1',
+                ]}
+              >
+                {foto ? (
+                  <img src={foto} alt={`${config.nombre} en ${lugar.ciudad || lugar.nombrePais}`} loading="lazy" class="absolute inset-0 size-full object-cover" style={lugar.enfoque ? `object-position:${lugar.enfoque}` : undefined} />
+                ) : (
+                  <div class="absolute inset-0 grid place-items-center pb-10">
+                    <Bandera pais={lugar.pais} class="w-20 -rotate-6 rounded-md border-[3px] border-black shadow-[0_4px_0_#000]" />
+                  </div>
+                )}
+                <div class="absolute inset-0 bg-gradient-to-t from-black/85 via-transparent to-transparent" />
+
+                {lugar.dia && (
+                  <span class="absolute top-3 left-3 rounded-full border-2 border-black bg-oro px-2.5 py-0.5 font-display text-sm text-black">
+                    DÍA {lugar.dia}
+                  </span>
+                )}
+                {!foto && mostrarPendientes && lugar.foto && (
+                  <span class="absolute top-2 right-2 left-2 rounded-lg border border-dashed border-oro/70 bg-noche/80 px-2 py-1 text-center text-[0.6rem] break-all text-oro">
+                    📷 public{lugar.foto}
+                  </span>
+                )}
+
+                <div class="absolute inset-x-0 bottom-0 p-3 lg:p-4">
+                  <p class="flex items-center gap-2 font-display text-xl leading-none uppercase sticker lg:text-2xl">
+                    <Bandera pais={lugar.pais} class="w-6 shrink-0 rounded-sm border border-black" />
+                    {lugar.ciudad || lugar.nombrePais}
+                  </p>
+                  {lugar.ciudad && <p class="mt-1 text-xs font-bold text-white/70">{lugar.nombrePais}</p>}
+                </div>
+              </article>
+            </div>
+          );
+        })}
+      </div>
+    </section>
+  )
+}

@@ -1,0 +1,12 @@
+---
+import { config } from '../config';
+
+const dominio = new URL(config.autor.url).hostname;
+---
+
+<footer class="mt-16 border-t border-white/10 pt-6 pb-[max(1.5rem,env(safe-area-inset-bottom))] text-center text-sm text-white/50">
+  Página hecha por {config.autor.nombre} ·{' '}
+  <a href={config.autor.url} target="_blank" rel="noopener" class="font-semibold text-oro/80 underline-offset-4 hover:underline">
+    {dominio}
+  </a>
+</footer>

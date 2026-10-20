@@ -1,0 +1,71 @@
+---
+import { miles, pct, type Estado } from '../lib/reto';
+import { mostrarPendientes } from '../lib/fotos';
+import Pendiente from './Pendiente.astro';
+
+interface Props {
+  estado: Estado;
+}
+
+const { estado } = Astro.props;
+---
+
+<section class="mt-10 text-center" aria-label="Día del reto">
+  <div data-vista="activo" hidden={estado.completado}>
+    <div class="-rotate-[4deg] font-display leading-none motion-safe:animate-entrada motion-safe:[animation-delay:250ms]">
+      <p class="text-5xl sticker-oro lg:text-6xl">DÍA</p>
+      <p class="mt-1 whitespace-nowrap sticker">
+        <span data-r="dia" class="text-[clamp(5.5rem,33vw,10rem)] tabular-nums lg:text-[11rem]">{estado.dia}</span><span
+          class="text-[clamp(2.25rem,12vw,4.25rem)] lg:text-7xl">/{estado.totalDias}</span
+        >
+      </p>
+    </div>
+
+    <div class="mx-auto mt-8 max-w-sm motion-safe:animate-subir motion-safe:[animation-delay:500ms]">
+      <div class="flex items-baseline justify-between text-sm font-bold">
+        <span class="text-white/70 uppercase tracking-wider">Progreso del reto</span>
+        <span data-r="pct" class="font-display text-2xl text-oro">{pct(estado.porcentaje)}</span>
+      </div>
+      <div class="mt-2 h-5 overflow-hidden rounded-full border-[3px] border-black bg-white/10 shadow-[0_3px_0_#000]">
+        <div
+          data-r="barra"
+          class="brillo-barra h-full origin-left rounded-full bg-gradient-to-r from-oro-oscuro via-oro to-oro-claro transition-[width] duration-700 motion-safe:animate-crecer motion-safe:[animation-delay:600ms]"
+          style={`width:${estado.porcentaje}%`}
+        >
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div data-vista="completado" hidden={!estado.completado} class="py-6">
+    <p class="font-display text-[clamp(2.5rem,13vw,4rem)] leading-[0.95] sticker-oro -rotate-[4deg] motion-safe:animate-entrada">
+      RETO<br />COMPLETADO
+    </p>
+    <p class="mt-6 font-display text-[clamp(3.5rem,21vw,7rem)] leading-none whitespace-nowrap sticker -rotate-[4deg] motion-safe:animate-entrada motion-safe:[animation-delay:250ms]">
+      {estado.totalDias}/{estado.totalDias}
+    </p>
+    <p class="mt-6 text-lg font-bold text-white/80">¡{estado.totalDias} días sin rendirse! 🏆🔥</p>
+  </div>
+
+  {
+    estado.flexiones !== null ? (
+      <div class="mt-9 motion-safe:animate-subir motion-safe:[animation-delay:650ms]">
+        <p class="font-display text-[clamp(2.75rem,15vw,4.5rem)] leading-none tabular-nums sticker -rotate-2">
+          <span data-r="flexiones">{miles(estado.flexiones)}</span>
+        </p>
+        <p class="mt-2 text-xs font-extrabold tracking-[0.3em] text-oro uppercase">Flexiones en total</p>
+        {
+          estado.flexionesHoy !== null && !estado.completado && (
+            <p class="mt-3 inline-block rounded-full border-2 border-black bg-oro px-3 py-1 text-sm font-extrabold text-black shadow-[0_3px_0_#000]">
+              Hoy le tocan <span data-r="flexiones-hoy">{miles(estado.flexionesHoy)}</span> 💪
+            </p>
+          )
+        }
+      </div>
+    ) : (
+      mostrarPendientes && (
+        <Pendiente class="mx-auto mt-8 max-w-sm" texto="Total de flexiones" detalle="config.flexionesPorDia: ¿cuántas hace por día?" />
+      )
+    )
+  }
+</section>

@@ -1,0 +1,40 @@
+---
+// Banderas simplificadas en SVG (los emojis de bandera no se ven en Windows).
+interface Props {
+  pais: string;
+  class?: string;
+}
+
+const { pais, class: clase } = Astro.props;
+const franja = 20 / 13;
+---
+
+{
+  pais === 'EC' ? (
+    <svg class={clase} viewBox="0 0 30 20" role="img" aria-label="Ecuador">
+      <rect width="30" height="10" fill="#ffdd00" />
+      <rect y="10" width="30" height="5" fill="#034ea2" />
+      <rect y="15" width="30" height="5" fill="#ed1c24" />
+    </svg>
+  ) : pais === 'CL' ? (
+    <svg class={clase} viewBox="0 0 30 20" role="img" aria-label="Chile">
+      <rect width="30" height="10" fill="#fff" />
+      <rect y="10" width="30" height="10" fill="#d52b1e" />
+      <rect width="10" height="10" fill="#0039a6" />
+      <polygon
+        points="5.00,2.00 5.71,4.03 7.85,4.07 6.14,5.37 6.76,7.43 5.00,6.20 3.24,7.43 3.86,5.37 2.15,4.07 4.29,4.03"
+        fill="#fff"
+      />
+    </svg>
+  ) : pais === 'US' ? (
+    <svg class={clase} viewBox="0 0 30 20" role="img" aria-label="Estados Unidos">
+      <rect width="30" height="20" fill="#fff" />
+      {Array.from({ length: 7 }, (_, i) => (
+        <rect y={i * 2 * franja} width="30" height={franja} fill="#b22234" />
+      ))}
+      <rect width="12" height={franja * 7} fill="#3c3b6e" />
+    </svg>
+  ) : (
+    <span class:list={['grid place-items-center bg-white/15 text-[0.6rem] font-black', clase]}>{pais}</span>
+  )
+}

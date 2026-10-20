@@ -1,0 +1,40 @@
+---
+import { config } from '../config';
+import { type Estado } from '../lib/reto';
+
+interface Props {
+  estado: Estado;
+}
+
+const { hito, dia } = Astro.props.estado;
+---
+
+<section
+  data-r="hito-tarjeta"
+  data-celebrando={hito.celebrando ? '' : undefined}
+  class="mt-10 rounded-3xl border-2 border-oro/40 bg-white/[0.04] p-6 text-center backdrop-blur data-[celebrando]:border-oro data-[celebrando]:bg-oro/10 motion-safe:animate-subir motion-safe:[animation-delay:650ms] motion-safe:data-[celebrando]:animate-brillo"
+>
+  <p data-r="hito-etiqueta" class="text-xs font-extrabold tracking-[0.3em] text-oro uppercase">{hito.etiqueta}</p>
+  <p data-r="hito-titulo" class="mt-3 font-display text-[clamp(2rem,10vw,2.75rem)] leading-none text-balance uppercase sticker">{hito.titulo}</p>
+  <p data-r="hito-detalle" class="mt-3 text-base font-semibold text-balance text-white/80">{hito.detalle}</p>
+
+  <div class="mt-5 h-3 overflow-hidden rounded-full border-2 border-black bg-white/10">
+    <div
+      data-r="hito-barra"
+      class="brillo-barra h-full rounded-full bg-oro transition-[width] duration-700"
+      style={`width:${hito.porcentaje}%`}
+    >
+    </div>
+  </div>
+  <p class="mt-2 flex justify-between text-xs font-bold text-white/60 tabular-nums">
+    <span data-r="hito-dia">Día {dia}</span>
+    <span data-r="hito-meta">Meta: día {hito.meta}</span>
+  </p>
+  <p
+    data-r="hito-superado"
+    hidden={!hito.superado || hito.celebrando}
+    class="mt-4 inline-block rounded-full bg-oro px-3 py-1 text-xs font-extrabold text-black uppercase"
+  >
+    🔥 Día {config.hito} superado
+  </p>
+</section>

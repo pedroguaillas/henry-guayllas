@@ -1,0 +1,69 @@
+---
+import { config } from '../config';
+import { mostrarPendientes } from '../lib/fotos';
+import Pendiente from './Pendiente.astro';
+import Polaroids from './Polaroids.astro';
+
+const { titulo, parrafos, fotos } = config.historia;
+const mueve = config.loQueMeMueve;
+
+const etiqueta = 'text-xs font-extrabold tracking-[0.3em] text-oro uppercase';
+const tituloClase = 'mt-2 font-display text-[clamp(2.2rem,11vw,3.5rem)] leading-[0.95] text-balance uppercase sticker-oro -rotate-2';
+---
+
+{
+  (parrafos.length > 0 || mostrarPendientes) && (
+    <section class="mt-16 lg:mt-28 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16" aria-label="Mi historia">
+      <Polaroids fotos={fotos} />
+
+      <div class="mt-10 lg:mt-0">
+        <p class={etiqueta}>Mi historia</p>
+        <h2 data-revelar="sello" class={tituloClase}>{titulo}</h2>
+        {parrafos.length > 0 ? (
+          <div data-revelar style="--retraso:150ms" class="mt-6 space-y-4 text-lg leading-relaxed text-white/85">
+            {parrafos.map((p, i) => (
+              <p class:list={[i === 0 && 'text-xl font-bold text-white']}>{p}</p>
+            ))}
+          </div>
+        ) : (
+          <Pendiente
+            class="mt-6 min-h-40"
+            texto="Texto de su historia"
+            detalle="config.historia.parrafos: de dónde es, por qué empezó el reto, qué lo motiva"
+          />
+        )}
+      </div>
+    </section>
+  )
+}
+
+{
+  mueve.parrafos.length > 0 && (
+    <section class="mt-16 lg:mt-24 lg:grid lg:grid-cols-2 lg:items-center lg:gap-16" aria-label={mueve.titulo}>
+      <Polaroids fotos={mueve.fotos} espejo class="lg:order-last" />
+
+      <div class="mt-10 lg:mt-0">
+        <p class={etiqueta}>Más allá del reto</p>
+        <h2 data-revelar="sello" class={tituloClase}>{mueve.titulo}</h2>
+        <ul data-revelar style="--retraso:100ms" class="mt-6 flex flex-wrap gap-2" aria-label="Lo que me gusta">
+          {mueve.gustos.map((g, i) => (
+            <li
+              class:list={[
+                'rounded-full border-2 border-black px-3.5 py-1.5 text-sm font-extrabold text-black shadow-[0_3px_0_#000]',
+                i % 2 ? 'bg-white' : 'bg-oro',
+                ['-rotate-2', 'rotate-2', '-rotate-1'][i % 3],
+              ]}
+            >
+              {g}
+            </li>
+          ))}
+        </ul>
+        <div data-revelar style="--retraso:150ms" class="mt-6 space-y-4 text-lg leading-relaxed text-white/85">
+          {mueve.parrafos.map((p, i) => (
+            <p class:list={[i === mueve.parrafos.length - 1 && 'text-xl font-bold text-white']}>{p}</p>
+          ))}
+        </div>
+      </div>
+    </section>
+  )
+}

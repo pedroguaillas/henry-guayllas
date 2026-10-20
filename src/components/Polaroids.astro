@@ -1,0 +1,56 @@
+---
+import type { FotoHistoria } from '../config';
+import { hayFoto, mostrarPendientes } from '../lib/fotos';
+import Pendiente from './Pendiente.astro';
+
+interface Props {
+  fotos: FotoHistoria[];
+  /** Invierte la inclinación para alternar con el bloque anterior. */
+  espejo?: boolean;
+  class?: string;
+}
+
+const { fotos, espejo = false, class: clase } = Astro.props;
+const visibles = fotos.filter((f) => hayFoto(f.foto) || mostrarPendientes).slice(0, 4);
+// 1–2 fotos: dos polaroids superpuestas. 3–4 fotos: collage de 2×2 con la columna derecha desplazada.
+const collage = visibles.length > 2;
+// [posición del envoltorio, giro de la foto]
+const giros = collage
+  ? [['', '-rotate-3'], ['mt-8', 'rotate-2'], ['-mt-4', 'rotate-2'], ['mt-4', '-rotate-3']]
+  : espejo
+    ? [['z-10', 'rotate-[4deg]'], ['-ml-[6%] mt-12', '-rotate-[5deg]']]
+    : [['z-10', '-rotate-[5deg]'], ['-ml-[6%] mt-12', 'rotate-[4deg]']];
+---
+
+{
+  visibles.length > 0 && (
+    <div class:list={[collage ? 'grid grid-cols-2 gap-x-3 px-1 lg:gap-x-5' : 'flex justify-center px-2', clase]}>
+      {visibles.map((f, i) => (
+        <div
+          data-revelar="lanzar"
+          data-paralaje
+          style={`--retraso:${i * 140}ms;--p:${i % 2 ? 1.4 : 0.8}`}
+          class:list={['relative shrink-0', !collage && 'w-[52%]', giros[i][0]]}
+        >
+          <figure
+            data-tilt
+            class:list={['relative rounded-2xl border-[3px] border-black bg-white p-2 pb-9 shadow-[0_6px_0_#000]', giros[i][1]]}
+          >
+            {hayFoto(f.foto) ? (
+              <img
+                src={f.foto}
+                alt={f.pie}
+                loading="lazy"
+                class="aspect-[4/5] w-full rounded-lg object-cover"
+                style={`object-position:${f.enfoque ?? '50% 30%'}`}
+              />
+            ) : (
+              <Pendiente texto="Foto" detalle={`public${f.foto}`} class="aspect-[4/5] w-full !rounded-lg !bg-zinc-900" />
+            )}
+            <figcaption class="absolute inset-x-0 bottom-1.5 text-center font-display text-lg text-black uppercase">{f.pie}</figcaption>
+          </figure>
+        </div>
+      ))}
+    </div>
+  )
+}

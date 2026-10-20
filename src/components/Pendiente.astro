@@ -1,0 +1,21 @@
+---
+// Recuadro punteado que marca una foto o texto por completar. Solo se usa en `npm run dev`.
+interface Props {
+  texto: string;
+  detalle?: string;
+  class?: string;
+}
+
+const { texto, detalle, class: clase } = Astro.props;
+---
+
+<div
+  class:list={[
+    'flex flex-col items-center justify-center gap-1 rounded-2xl border-2 border-dashed border-oro/60 bg-oro/5 p-4 text-center',
+    clase,
+  ]}
+>
+  <span class="text-2xl" aria-hidden="true">📷</span>
+  <span class="text-xs font-extrabold tracking-wider text-oro uppercase">{texto}</span>
+  {detalle && <code class="text-[0.7rem] break-all text-white/50">{detalle}</code>}
+</div>
